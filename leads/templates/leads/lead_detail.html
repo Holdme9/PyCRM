@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    <p>Информация о заявке {{ lead.id }}</p>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'leads:lead_list' %}">Вернуться к списку заявок</a>
+    <hr />
+
+    <h1>Информация о заявке {{ lead.id }}</h1>
+    <p>Клиент: {{ lead.first_name }} {{ lead.last_name }}</p>
+    <p>Клиент: {{ lead.order }} - {{ lead.price }}</p>
+    <p>Клиент: {{ lead.phone }} {{ lead.email }}</p>
+    <p>Клиент: {{ lead.status }} {{ lead.date_updated }}</p>
+    <p>Клиент: {{ lead.comment }}</p>
+    <p>Клиент: {{ lead.date_created }}</p>
+    <hr />
+
+    <a href="{% url 'leads:lead_update' lead.pk %}">Редактировать</a>
+    <a href="{% url 'leads:lead_delete' lead.pk %}">Удалить</a>
+{% endblock %}
