@@ -13,6 +13,5 @@ class LeadCreateUpdateForm(forms.ModelForm):
             'email',
             'phone',
             'comment',
-            'status', 
+            'status',
         ]
-

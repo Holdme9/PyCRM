@@ -1,8 +1,7 @@
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
-from .models import Lead, Status
+from .models import Lead
 from .forms import LeadCreateUpdateForm
 
 
@@ -18,6 +17,7 @@ class LeadListView(LeadMixin, generic.ListView):
     context_object_name = 'leads'
     template_name = 'leads/lead_list.html'
 
+
 class LeadCreateView(LoginRequiredMixin, generic.CreateView):
     model = Lead
     form_class = LeadCreateUpdateForm
@@ -31,7 +31,6 @@ class LeadCreateView(LoginRequiredMixin, generic.CreateView):
 
 class LeadDetailView(LeadMixin, generic.DetailView):
     template_name = 'leads/lead_detail.html'
-
 
 
 class LeadUpdateView(LeadMixin, generic.UpdateView):
