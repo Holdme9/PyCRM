@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <p>Invite users to organization</p>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'organizations:organization_list' %}">Go back to your organizations</a>\
+    <hr />
+    <h1>Invite users to your organisation</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Invite</button>
+    </form>
+{% endblock %}

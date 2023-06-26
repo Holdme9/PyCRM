@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <p>Organization list</p>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'organizations:organization_create' %}">Create an organisation</a>
+    <a href="{% url 'organizations:organization_invite' %}">Invite users to organization</a>
+    <hr />
+    <h1>Organizations you're in:</h1>
+    <p>Name:{{ organizations.organization.name }} Your role:{{ organizations.role }}</p>
+{% endblock %}

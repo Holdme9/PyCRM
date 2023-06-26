@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'leads',
     'users',
     'crispy_forms',
+    'organizations'
 ]
 
 MIDDLEWARE = [
