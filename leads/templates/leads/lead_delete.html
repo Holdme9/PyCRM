@@ -6,7 +6,7 @@
 
 
 {% block content %}
-    <a href="{% url 'leads:lead_list' %}">Вернуться к списку заявок</a>
+    <a href="{% url 'organizations:leads:lead_list' org_id %}">Вернуться к списку заявок</a>
     <hr />
     <h1>Вы уверены, что хотите удалить эту заявку?</h1>
     <form method="post">

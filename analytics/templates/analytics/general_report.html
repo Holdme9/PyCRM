@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <p>{{ leads_created_today_count }}</p>
+    <p>{{ leads_created_today_price }}</p>
+    <p>{{ leads_created_this_month_count }}</p>
+    <p>Потенцальная выручка {{ leads_created_this_month_price }}</p>
+    <p>Выручка {{ leads_created_this_month_price_done }}</p>
+
+    <br />
+
+    <a href="{% url 'organizations:organization_list' %}">Вернуться к списку организаций</a>
+    <a href="{% url 'organizations:leads:lead_list' org_id %}">Сделки</a>
+
+    <br />
+    <hr />
+
+    <p>Лиды по статусам</p>
+
+    {% for status_group, leads in leads_by_statuses.items %}
+        <p>{{ status_group }} - {{ leads }}</p>
+    {% endfor %}
+
+{% endblock %}

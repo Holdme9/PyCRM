@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <p>Заявки проекта {{ organisation }}</p>
+    {# i should pass here an organistaion name #}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Отчет по менеджерам</h1>
+    {% for manager in managers %}
+        <p>{{ manager }}</p>
+    {% endfor %}
+
+    {% for key, value in leads_by_manager.items %}
+        <p>{{ key }} - {{ value }}</p>
+    {% endfor %}
+
+{% endblock %}

@@ -1,4 +1,3 @@
-from typing import Any, Dict
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
@@ -42,12 +41,6 @@ class OrganizationInviteView(LoginRequiredMixin, FormView):
         user = self.request.user
         role = 'owner'
         queryset = Membership.objects.filter(user=user).filter(role=role)
-
-    # def get_form_kwargs(self) -> Dict[str, Any]:
-    #     kwargs = super().get_form_kwargs()
-    #     owned_organizations = Membership.objects.filter(user=self.request.user, role='owner')
-    #     kwargs['owned_organizations'] = owned_organizations
-    #     return kwargs
 
     def form_valid(self, form):
         email = form.cleaned_data['email']

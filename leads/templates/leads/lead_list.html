@@ -6,9 +6,11 @@
 {% endblock %}
 
 {% block content %}
-<a href="{% url 'leads:lead_create' %}">Создать новую заявку</a>
+    <a href="{% url 'organizations:leads:lead_create' org_id %}">Создать новую заявку</a>
+    <a href="{% url 'organizations:analytics:general_report' org_id %}">Посмотреть в виде Канбан</a>
+    <br />
     {% for lead in leads %}
         <p>{{ lead.first_name }} {{ lead.last_name }}</p>
-        <a href="{% url 'leads:lead_detail' lead.pk %}">Открыть заявку</a>
+        <a href="{% url 'organizations:leads:lead_detail' org_id=org_id pk=lead.pk %}">Открыть заявку</a>
     {% endfor %}
 {% endblock %}

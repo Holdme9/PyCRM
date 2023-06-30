@@ -1,8 +1,20 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Status(models.Model):
+    GROUP_CHOICES = [
+        ('New', 'Новый'),
+        ('In progress', 'В работе'),
+        ('Paid', 'Оплачен'),
+        ('Done', 'Выполнен'),
+        ('Rejected', 'Отказ'),
+    ]
+
     name = models.CharField(max_length=100)
+    group = models.CharField(max_length=25, choices=GROUP_CHOICES, default=GROUP_CHOICES[0][1])
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -16,13 +28,18 @@ class Lead(models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=False, default='+7(900)123-45-67')
     comment = models.TextField(blank=True, default=None)
-    # organization = models.ForeignKey(Organisation, blank=False, on_delete=models.CASCADE)
-    # manager = models.ForeignKey(Manager, blank=True, null=True, 
-    #                            on_delete=models.SET_NULL, default=None)
+    manager = models.ForeignKey(User, blank=True, null=True,
+                                on_delete=models.SET_NULL, default=None)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now_add=True)
+    organization = models.CharField(max_length=100, null=True, default=None)
+    date_created = models.DateField(auto_now_add=True)
+    date_updated = models.DateField(auto_now_add=True)
+
+    # def save(self, *args, **kwargs):
+    #     resolver_match = resolve(self.request.path_info)
+    #     organization_id = resolver_match.kwargs.get('org_id')
+    #     self.organization = Organization.objects.get(pk=organization_id)
+    #     super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name} - {self.order}'
-
+        return f'{self.order} - {self.first_name} {self.last_name}'

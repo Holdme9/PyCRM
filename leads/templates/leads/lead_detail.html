@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{% url 'leads:lead_list' %}">Вернуться к списку заявок</a>
+    <a href="{% url 'organizations:leads:lead_list' org_id %}">Вернуться к списку заявок</a>
     <hr />
 
     <h1>Информация о заявке {{ lead.id }}</h1>
@@ -19,6 +19,6 @@
     <p>Клиент: {{ lead.date_created }}</p>
     <hr />
 
-    <a href="{% url 'leads:lead_update' lead.pk %}">Редактировать</a>
-    <a href="{% url 'leads:lead_delete' lead.pk %}">Удалить</a>
+    <a href="{% url 'organizations:leads:lead_update' org_id=org_id pk=lead.pk %}">Редактировать</a>
+    <a href="{% url 'organizations:leads:lead_delete' org_id=org_id pk=lead.pk %}">Удалить</a>
 {% endblock %}
