@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from .models import Lead
 from .forms import LeadCreateUpdateForm
+from organizations.models import Organization
 
 
 class LeadMixin(LoginRequiredMixin):
@@ -40,6 +41,9 @@ class LeadCreateView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        org_id = self.kwargs['org_id']
+        organization = Organization.objects.get(id=org_id)
+        form.instance.organization = organization
         return super().form_valid(form)
 
 

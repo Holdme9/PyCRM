@@ -100,6 +100,8 @@ class PeriodReport(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        # TO FIX: code should be rewritten in order to be more dynamic and flexible
+        # User should be able to chose date range and point size like a day or a month etc...
         last_30_days = now - timedelta(days=30)
         leads = Lead.objects.filter(date_created__gte=last_30_days)
         leads_by_date = dict()

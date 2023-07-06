@@ -23,4 +23,6 @@ urlpatterns = [
     path('users/', include(('users.urls', 'users'), namespace='users')),
     path('organizations/', include(('organizations.urls', 'organizations'),
                                    namespace='organizations')),
+    path('leads-api/', include(('leads_api.urls', 'leads_api'), namespace='leads_api')),
+    path('users-api/', include(('users_api.urls', 'users_api'), namespace='users_api')),
 ]

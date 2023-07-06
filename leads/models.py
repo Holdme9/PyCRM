@@ -35,11 +35,5 @@ class Lead(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now_add=True)
 
-    # def save(self, *args, **kwargs):
-    #     resolver_match = resolve(self.request.path_info)
-    #     organization_id = resolver_match.kwargs.get('org_id')
-    #     self.organization = Organization.objects.get(pk=organization_id)
-    #     super().save(*args, **kwargs)
-
     def __str__(self) -> str:
         return f'{self.order} - {self.first_name} {self.last_name}'
