@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Удаление пользователя {{ user.username }}
+{% endblock %}
+
+
+{% block content %}
+    <a href="{% url 'users:user_profile' user.pk %}">Вернуться</a>
+    <hr />
+    <h1>Вы уверены, что хотите удалить свой аккаунт?</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ for.as_p }}
+        <button type="submit">Удалить</button>
+    </form>
+{% endblock %}

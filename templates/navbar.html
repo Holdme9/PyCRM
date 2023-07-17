@@ -8,7 +8,7 @@
         <a href="#" class="mr-5 hover:text-gray-900">Пункт меню</a>
       </nav>
       {% if request.user.is_authenticated %}
-        Вы вошли как:&nbsp;<b style="color: blue">{{ request.user.username }}</b>
+        Вы вошли как:<a href="{% url 'users:user_profile' request.user.id  %}">&nbsp;<b style="color: blue">{{ request.user.username }}</b></a>
         <a href="{% url 'users:logout' %}" class="mr-5 hover:text-gray-900">
           <button class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Выйти
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">

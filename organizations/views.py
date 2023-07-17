@@ -1,10 +1,14 @@
+from typing import Any, Dict, Optional
+from django.db import models
+from django.db.models import QuerySet, Model
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import CreateView, FormView, TemplateView
+from django.views import generic
 from .forms import OrganizationCreateForm, InvitationForm
 from .models import Organization, Membership, MembershipInvitation
+from users.models import User
 
 
 def OrganizationList(request):
@@ -12,7 +16,11 @@ def OrganizationList(request):
     return render(request, 'organizations/organization_list.html', context=context)
 
 
-class OrganizationCreateView(LoginRequiredMixin, CreateView):
+def MainPage(request):
+    return render(request, 'main_page.html')
+
+
+class OrganizationCreateView(LoginRequiredMixin, generic.CreateView):
     model = Organization
     form_class = OrganizationCreateForm
     template_name = 'organizations/organization_create.html'
@@ -32,7 +40,27 @@ class OrganizationCreateView(LoginRequiredMixin, CreateView):
 # И еще чтобы нельзя было приглашать юзеров, которые уже состоят в организации,
 # Либо, чтобы запись не создавалась, когда приглашение принималось.
 
-class OrganizationInviteView(LoginRequiredMixin, FormView):
+
+class OrganizationDetailView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'organizations/organization_detail.html'
+    context_object_name = 'organization'
+    queryset = Organization.objects.all()
+
+    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+        org_id = self.kwargs['org_id']
+        return self.get_queryset().get(id=org_id)
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        org_id = self.kwargs['org_id']
+        memberships = Membership.objects.filter(organization=org_id)
+        user_ids = memberships.values_list('user', flat=True)
+        members = User.objects.filter(id__in=user_ids)
+        context['members'] = members
+        return context
+
+
+class OrganizationInviteView(LoginRequiredMixin, generic.FormView):
     form_class = InvitationForm
     template_name = 'organizations/organization_invite.html'
     success_url = reverse_lazy('organizations:organization_list')
@@ -59,7 +87,7 @@ class OrganizationInviteView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class OrganizationJoinView(TemplateView):
+class OrganizationJoinView(generic.TemplateView):
     template_name = 'organizations/organization_join.html'
     success_url = reverse_lazy('organizations:organization_list')
 

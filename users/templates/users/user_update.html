@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <p>Обновление информации по заявке</p>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'users:user_profile' user.pk %}">Вернуться </a>
+    <hr />
+    <h1>Обновить информацию о пользователе {{ user.username }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Обновить</button>    
+    </form>
+{% endblock %}

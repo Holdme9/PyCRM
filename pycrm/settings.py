@@ -1,5 +1,6 @@
 import environ
 from pathlib import Path
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,9 +27,9 @@ INSTALLED_APPS = [
     'crispy_forms',
     'organizations',
     'analytics',
-    'leads_api',
     'rest_framework',
     'rest_framework.authtoken',
+    'leads_api',
     'users_api',
 ]
 
@@ -97,8 +98,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+]
+
 
 LANGUAGE_CODE = 'en-us'
 
@@ -121,9 +124,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
-LOGIN_URL = '/users/login'
-LOGIN_REDIRECT_URL = '/leads'
-LOGOUT_REDIRECT_URL = '/users/login'
+LOGIN_URL = reverse_lazy('users:login')
+LOGIN_REDIRECT_URL = reverse_lazy('organizations:organization_list')
+LOGOUT_REDIRECT_URL = reverse_lazy('users:login')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

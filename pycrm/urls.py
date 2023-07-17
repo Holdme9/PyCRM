@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from organizations.views import MainPage
 
 
 urlpatterns = [
     path('adm/', admin.site.urls),
+    path('', MainPage, name='main_page'),
     path('users/', include(('users.urls', 'users'), namespace='users')),
     path('organizations/', include(('organizations.urls', 'organizations'),
                                    namespace='organizations')),
-    path('leads-api/', include(('leads_api.urls', 'leads_api'), namespace='leads_api')),
     path('users-api/', include(('users_api.urls', 'users_api'), namespace='users_api')),
 ]

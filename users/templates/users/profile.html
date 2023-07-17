@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Информация о пользователе {{ user.username}}</h1>
+    <p>Имя: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Клиент: {{ user.email }}
+    <hr />
+
+    <a href="{% url 'users:user_update' user.pk %}">Редактировать</a>
+    <a href="{% url 'users:user_delete' user.pk %}">Удалить</a>
+{% endblock %}

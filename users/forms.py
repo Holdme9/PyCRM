@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.auth.forms import UserCreationForm, UsernameField, UserChangeForm
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -9,3 +9,10 @@ class SignupForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'first_name', 'last_name')
         field_classes = {'username': UsernameField}
+
+
+class UserUpdateForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', ]
+        exclude = ['username', 'password', ]

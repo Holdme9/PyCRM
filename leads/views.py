@@ -12,16 +12,17 @@ class LeadMixin(LoginRequiredMixin):
     context_object_name = 'lead'
 
 
-class LeadListView(LeadMixin, generic.ListView):
-    # Later I need to add leads filter functionality to show only leads who belong
-    # to a asking organisation and managers attached to it.
+class LeadListView(generic.ListView):
     template_name = 'leads/lead_list.html'
+    queryset = Lead.objects.all()
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        leads = Lead.objects.all()
+        org_id = self.kwargs['org_id']
+        organization = Organization.objects.get(id=org_id)
+        leads = Lead.objects.filter(organization=organization)
         context['leads'] = leads
-        context['org_id'] = self.kwargs['org_id']
+        context['org_id'] = org_id
         return context
 
 
