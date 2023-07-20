@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    <p>Информация о заявке {{ lead.id }}</p>
+    Информация о заявке №{{ lead.id }}
 {% endblock %}
 
 {% block content %}
@@ -12,11 +12,13 @@
 
     <h1>Информация о заявке {{ lead.id }}</h1>
     <p>Клиент: {{ lead.first_name }} {{ lead.last_name }}</p>
-    <p>Клиент: {{ lead.order }} - {{ lead.price }}</p>
-    <p>Клиент: {{ lead.phone }} {{ lead.email }}</p>
-    <p>Клиент: {{ lead.status }} {{ lead.date_updated }}</p>
-    <p>Клиент: {{ lead.comment }}</p>
-    <p>Клиент: {{ lead.date_created }}</p>
+    <p>Заказ: {{ lead.order }}</p>
+    <p>Стоимость: {{ lead.price }} руб.</p>
+    <p>Контакты: {{ lead.phone }}, {{ lead.email }}</p>
+    <p>Статус: {{ lead.status }} </p>
+    <p>Комментарий: {{ lead.comment }}</p>
+    <p>Создан: {{ lead.date_created }}</p>
+    <p>Последнее обновление: {{ lead.date_updated }}</p>
     <hr />
 
     <a href="{% url 'organizations:leads:lead_update' org_id=org_id pk=lead.pk %}">Редактировать</a>

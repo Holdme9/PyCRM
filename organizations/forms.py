@@ -9,8 +9,6 @@ class OrganizationCreateForm(forms.ModelForm):
 
 
 class InvitationForm(forms.ModelForm):
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all())
-
     class Meta:
         model = MembershipInvitation
-        fields = ['organization', 'email', ]
+        fields = ['email', ]

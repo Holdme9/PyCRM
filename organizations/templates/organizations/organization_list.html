@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block content %}
-
     <a href="{% url 'organizations:organization_create' %}">Create an organisation</a>
-    <a href="{% url 'organizations:organization_invite' %}">Invite users to organization</a>
     <hr />
-    <h1>Organizations you're in:</h1>
-    <p>Name:{{ organizations.organization.name }} Your role:{{ organizations.role }}
-        <a href="{% url 'organizations:leads:lead_list' organizations.organization.pk %}">Заявки организации</a>
-        <a href="{% url 'organizations:organization_detail' organizations.organization.pk %}">Профайл</a>
-    </p>
-
+    <h1>Вы состоите в организациях:</h1>
+    {% if organizations %}  
+        {% for organization in organizations %}
+            <p>Name:{{ organization.name }} Your role:{{ organization.role }}
+            <a href="{% url 'organizations:leads:lead_list' organization.pk %}">Заявки организации</a>
+            <a href="{% url 'organizations:organization_detail' organization.pk %}">Профайл</a>
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Вы не состоите в организациях, создайте новую или попросите владельца существующей
+            организации выслать приглашение на вашу почту.
+        </p>
+    {% endif %}
 {% endblock %}

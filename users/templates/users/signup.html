@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Регистрация новой организации</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зарегистрировать</button>
-    </form>
+<h2>Регистрация нового аккаунта</h2>
+    {% if user.is_authenticated %}
+        <p>Вы уже зарегистрированы</p>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрировать</button>
+        </form>
+    {% endif %}
 {% endblock %}

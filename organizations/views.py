@@ -1,19 +1,26 @@
-from typing import Any, Dict, Optional
-from django.db import models
+from typing import Any, Dict
 from django.db.models import QuerySet, Model
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.views import generic
 from .forms import OrganizationCreateForm, InvitationForm
 from .models import Organization, Membership, MembershipInvitation
 from users.models import User
 
 
-def OrganizationList(request):
-    context = {'organizations': Membership.objects.get(user=request.user)}
-    return render(request, 'organizations/organization_list.html', context=context)
+class OrganizationListView(LoginRequiredMixin, generic.ListView):
+    model = Organization
+    template_name = 'organizations/organization_list.html'
+    context_object_name = 'organizations'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        user = self.request.user
+        memberships = Membership.objects.filter(user=user)
+        organizations = Organization.objects.filter(pk__in=memberships.values('organization'))
+        return organizations
 
 
 def MainPage(request):
@@ -35,12 +42,6 @@ class OrganizationCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-# Позже нужно сделать так, чтобы только у владельца была возможность приглашать менеджеров
-# А также скрыть эту опцию в шаблоне, чтобы она вообще у менеджеров не отображалась.
-# И еще чтобы нельзя было приглашать юзеров, которые уже состоят в организации,
-# Либо, чтобы запись не создавалась, когда приглашение принималось.
-
-
 class OrganizationDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'organizations/organization_detail.html'
     context_object_name = 'organization'
@@ -54,37 +55,56 @@ class OrganizationDetailView(LoginRequiredMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
         org_id = self.kwargs['org_id']
         memberships = Membership.objects.filter(organization=org_id)
+        user = self.request.user
+        user_is_owner = memberships.get(user=user).role == 'owner'
         user_ids = memberships.values_list('user', flat=True)
         members = User.objects.filter(id__in=user_ids)
         context['members'] = members
+        context['user_is_owner'] = user_is_owner
         return context
 
 
-class OrganizationInviteView(LoginRequiredMixin, generic.FormView):
+class OrganizationInviteView(PermissionRequiredMixin, generic.FormView):
     form_class = InvitationForm
     template_name = 'organizations/organization_invite.html'
     success_url = reverse_lazy('organizations:organization_list')
 
-    def get_queryset(self):
+    def has_permission(self) -> bool:
         user = self.request.user
-        role = 'owner'
-        queryset = Membership.objects.filter(user=user).filter(role=role)
+        org_id = self.kwargs['org_id']
+        organization = Organization.objects.get(id=org_id)
+        user_role = Membership.objects.get(user=user, organization=organization).role
+        if user_role == 'owner':
+            return True
+        raise PermissionDenied
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
-        organization = form.cleaned_data['organization']
-        invitation = MembershipInvitation.objects.create(organization=organization, email=email)
-        send_mail(
-            f'Organization {organization} invites you to join it',
-            'To accept the invitation click link below:\n\n'
-            + self.request.build_absolute_uri(reverse_lazy(
-                    "organizations:organization_join",
-                    kwargs={'token': invitation.token})),
-            'noreply@example.com',
-            [email],
-            fail_silently=False,
-            )
-        return super().form_valid(form)
+        organization = Organization.objects.get(id=self.kwargs['org_id'])
+        
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            form.add_error('email', 'Пользователя с таким email не существует')
+            return self.form_invalid(form)
+
+        try:
+            membership = Membership.objects.get(user=user, organization=organization)
+            form.add_error('email', 'Этот пользователь уже состоит в вашей организации')
+            return self.form_invalid(form)
+        except Membership.DoesNotExist:
+            invitation = MembershipInvitation.objects.create(organization=organization, email=email)
+            send_mail(
+                f'Organization {organization} invites you to join it',
+                'To accept the invitation click link below:\n\n'
+                + self.request.build_absolute_uri(reverse_lazy(
+                        "organizations:organization_join",
+                        kwargs={'token': invitation.token})),
+                'noreply@example.com',
+                [email],
+                fail_silently=False,
+                )
+            return super().form_valid(form)
 
 
 class OrganizationJoinView(generic.TemplateView):
@@ -96,18 +116,15 @@ class OrganizationJoinView(generic.TemplateView):
         try:
             invitation = MembershipInvitation.objects.get(token=token)
         except MembershipInvitation.DoesNotExist:
-            return redirect(reverse_lazy('organizations:organisation_list'))
+            return redirect(reverse_lazy('organizations:organization_list'))
         return super().get(request, *args, **kwargs)
-
-    # нужно также сделать логику, чтобы пользователю нельзя было отправить приглашение
-    # если он уже является членом организации
 
     def post(self, request, *args, **kwargs):
         token = kwargs.get('token')
         try:
             invitation = MembershipInvitation.objects.get(token=token)
         except MembershipInvitation.DoesNotExist:
-            return redirect(reverse_lazy('organizations:organisation_list'))
+            return redirect(reverse_lazy('organizations:organization_list'))
         membership = Membership.objects.create(
             user=request.user,
             organization=invitation.organization,

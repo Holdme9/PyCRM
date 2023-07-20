@@ -1,6 +1,10 @@
+from typing import Any, Dict, Mapping, Optional, Type, Union
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 from .models import Lead
-from organizations.models import Organization
+from organizations.models import Organization, Membership
 
 
 class LeadCreateUpdateForm(forms.ModelForm):
@@ -18,13 +22,10 @@ class LeadCreateUpdateForm(forms.ModelForm):
             'status',
         ]
 
-    # def __init__(self, org_id, *args, **kwargs) -> None:
-    #     super().__init__(*args, **kwargs)
-    #     self.org_id = kwargs['org_id']
+    def __init__(self, *args, **kwargs):
+        managers = kwargs.pop('managers', None)
+        super().__init__(*args, **kwargs)
+        self.empty_permitted = True
+        self.use_required_attribute = False
+        self.fields['manager'].queryset = managers
 
-    # def save(self, commit=True):
-    #     lead = super().save(commit=False)
-    #     lead.organization = Organization.objects.get(pk=self.org_id)
-    #     if commit:
-    #         lead.save()
-    #     return lead

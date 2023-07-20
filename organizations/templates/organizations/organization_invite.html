@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{% url 'organizations:organization_list' %}">Go back to your organizations</a>\
+    <a href="{% url 'organizations:organization_list' %}">Вернуться к организации</a>
     <hr />
-    <h1>Invite users to your organisation</h1>
+    <h1>Пригласить пользователя в организацию</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Invite</button>
+        <button type="submit" class="btn btn-primary">Пригласить</button>
     </form>
 {% endblock %}

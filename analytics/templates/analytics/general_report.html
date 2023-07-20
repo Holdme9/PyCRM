@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <a href="{% url 'organizations:analytics:period_report' org_id %}">Отчет за период</a>
+    <a href="{% url 'organizations:analytics:manager_report' org_id %}">Отчет по менеджерам</a>
+    <hr />
 
-    <p>{{ leads_created_today_count }}</p>
-    <p>{{ leads_created_today_price }}</p>
-    <p>{{ leads_created_this_month_count }}</p>
-    <p>Потенцальная выручка {{ leads_created_this_month_price }}</p>
-    <p>Выручка {{ leads_created_this_month_price_done }}</p>
+    <p>Заявок за сегодня: {{ leads_created_today_count }}</p>
+    <p>На сумму: {{ leads_created_today_price }}</p>
+    <p>Заявок в этом месяце: {{ leads_created_this_month_count }}</p>
+    <p>Выручка: {{ leads_created_this_month_price_done }}</p>
+    <p>Потенцальная выручка: {{ leads_created_this_month_price }}</p>
+    
 
     <br />
 
@@ -18,8 +22,14 @@
 
     <p>Лиды по статусам</p>
 
-    {% for status_group, leads in leads_by_statuses.items %}
-        <p>{{ status_group }} - {{ leads }}</p>
-    {% endfor %}
+    <table>
+        {% for status, leads in leads_by_statuses.items %}
+            <tr>
+                <th>{{ status }}</th>
+                <td>{{ leads }}</td>    
+            </tr>    
+        {% endfor %}
+      </table>
+      
 
 {% endblock %}
