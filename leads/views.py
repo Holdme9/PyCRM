@@ -13,17 +13,14 @@ User = get_user_model()
 
 
 class GetQuerysetAndLeadContextObjectNameMixin:
-    '''
-    Provides queryset of Lead model instances and context object name.
-    '''
+    """Provides queryset and context object name for Lead model."""
+
     queryset = Lead.objects.all()
     context_object_name = 'lead'
 
 
 class VerifyMembershipMixin(PermissionRequiredMixin):
-    """
-    Verifies that user has the necessary membership to access a resource.
-    """
+    """Verifies that user has the necessary membership to access a resource."""
 
     def has_permission(self) -> bool:
         """
@@ -51,9 +48,7 @@ class VerifyMembershipMixin(PermissionRequiredMixin):
 
 
 class GetContextDataMixin:
-    """
-    Provides additional context data for views.
-    """
+    """Provides additional context data for views."""
 
     def get_context_data(self, **kwargs) -> dict:
         """
@@ -72,9 +67,7 @@ class GetContextDataMixin:
 
 
 class GetFormKwargsMixin:
-    """
-    Provides additional kwargs to forms.
-    """
+    """Provides additional kwargs to forms."""
 
     def get_form_kwargs(self) -> dict:
         """
@@ -96,16 +89,14 @@ class LeadCreateView(
     VerifyMembershipMixin,
     generic.CreateView
         ):
-    """
-    A view for creating a new lead.
-    """
+    """A view for creating a new lead."""
     model = Lead
     form_class = LeadCreateUpdateForm
     template_name = 'leads/lead_create.html'
 
     def form_valid(self, form):
         """
-        Gets the organization and sets it as a value of form organization attribute.
+        Gets the organization and sets it as a value of a valid form's organization attribute.
 
         Args:
             form: The validated form.
@@ -129,9 +120,8 @@ class LeadCreateView(
 
 
 class LeadListView(GetContextDataMixin, VerifyMembershipMixin, generic.ListView):
-    """
-    A view for displaying a list of leads.
-    """
+    """A view for displaying a list of leads."""
+
     template_name = 'leads/lead_list.html'
     queryset = Lead.objects.all()
 
@@ -142,9 +132,8 @@ class LeadDetailView(
     GetQuerysetAndLeadContextObjectNameMixin,
     generic.DetailView
 ):
-    """
-    A view for displaying details of lead.
-    """
+    """A view for displaying details of lead."""
+
     template_name = 'leads/lead_detail.html'
 
 
@@ -155,9 +144,8 @@ class LeadUpdateView(
     GetQuerysetAndLeadContextObjectNameMixin,
     generic.UpdateView
 ):
-    """
-    A view for updating a lead.
-    """
+    """A view for updating a lead."""
+
     form_class = LeadCreateUpdateForm
     template_name = 'leads/lead_update.html'
 
@@ -180,7 +168,6 @@ class LeadDeleteView(
     GetQuerysetAndLeadContextObjectNameMixin,
     generic.DeleteView
 ):
-    """
-    A view for deleting a lead.
-    """
+    """A view for deleting a lead."""
+
     template_name = 'leads/lead_delete.html'

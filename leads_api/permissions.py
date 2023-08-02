@@ -1,4 +1,5 @@
 from rest_framework import permissions
+
 from organizations.models import Organization, Membership
 
 
@@ -8,5 +9,9 @@ class MembershipPermission(permissions.BasePermission):
         user = request.user
         org_id = view.kwargs.get('org_id')
         organization = Organization.objects.get(id=org_id)
-        membership = Membership.objects.get(user=user, organization=organization)
-        return True if membership else False
+
+        try:
+            membership = Membership.objects.get(user=user, organization=organization)
+            return True
+        except Membership.DoesNotExist:
+            return False

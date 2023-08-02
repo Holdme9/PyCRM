@@ -1,9 +1,10 @@
 from django.test import TestCase, RequestFactory
-from .. import views
-from ..models import Lead, Status
 from django.contrib.auth import get_user_model
-from organizations.models import Organization, Membership
 from django.urls import reverse
+
+from .. import views
+from ..models import Lead
+from organizations.models import Organization, Membership
 
 User = get_user_model()
 

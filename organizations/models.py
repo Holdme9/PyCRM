@@ -1,6 +1,7 @@
 from django.db import models
-import uuid
 from django.contrib.auth import get_user_model
+
+import uuid
 
 
 User = get_user_model()
@@ -16,7 +17,7 @@ class Organization(models.Model):
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    role = models.CharField(max_length=30)
+    role = models.CharField(max_length=30, default='manager')
 
 
 class MembershipInvitation(models.Model):

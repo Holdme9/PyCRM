@@ -1,8 +1,10 @@
 from django.forms import ValidationError
 from django.test import TestCase
-from ..models import Lead, Status
 from django.contrib.auth import get_user_model
+
 from datetime import date
+
+from ..models import Lead, Status
 
 User = get_user_model()
 

@@ -1,8 +1,11 @@
 from django.test import TestCase
-from users.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+
 from organizations.models import Organization, Membership
 from ..models import Lead
+
+User = get_user_model()
 
 
 class LeadsURLTests(TestCase):
