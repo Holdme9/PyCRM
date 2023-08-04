@@ -106,7 +106,7 @@ class OrganizationDetailView(VerifyMembershipMixin, generic.DetailView):
         return get_object_or_404(self.get_queryset(), id=org_id)
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Adds objects to the context dictionary."""
+        """Provides data for the context dictionary."""
 
         context = super().get_context_data(**kwargs)
         org_id = self.kwargs['org_id']
