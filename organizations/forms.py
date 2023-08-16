@@ -6,6 +6,9 @@ class OrganizationCreateForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields = ['name', ]
+        labels = {
+            'name': 'Название',
+        }
 
 
 class InvitationForm(forms.ModelForm):

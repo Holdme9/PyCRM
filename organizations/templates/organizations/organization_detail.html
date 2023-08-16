@@ -5,12 +5,40 @@
 {% endblock %}
 
 {% block content %}
-    {% if user_is_owner %}
-    <a href="{% url 'organizations:organization_invite' organization.pk %}">Пригласить в организацию</a>
-    <hr />
-    {% endif %}
-    <h1>Список членов организации {{ organization }}:</h1>
-    {% for member in members %}
-        <p>{{ member }}</p>
-    {% endfor %}
+    <section class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Список пользователей, состоящих в {{ organization }}:</h1>
+            </div>
+            <div class="col-sm-6 d-none d-sm-block">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">{{ organization.name }}</li>
+                </ol>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <section class="content-body">
+        {% for member in members %}
+            <div>
+                <ul>
+                    <li>{{ member }}</li>
+                </ul>
+            </div>    
+        {% endfor %}
+
+        <br />
+        <hr />
+        <br />
+
+        {% if user_is_owner %}
+            <a class="btn btn-primary btn-lg" href="{% url 'organizations:organization_invite' organization.pk %}">
+                <i class="fas fa-user-plus"></i>
+                Пригласить пользователей
+            </a>
+        {% endif %}
+    </section>
 {% endblock %}

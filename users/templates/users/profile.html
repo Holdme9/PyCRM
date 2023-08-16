@@ -1,11 +1,52 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Профайл пользователя {{ user }}{% endblock %}
 
 {% block content %}
-    <h1>Информация о пользователе {{ user.username}}</h1>
-    <p>Имя: {{ user.first_name }} {{ user.last_name }}</p>
-    <p>Клиент: {{ user.email }}
-    <hr />
+    <section class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Информация о пользователе {{ user.username }}</h1>
+            </div>
+            <div class="col-sm-6 d-none d-sm-block">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">{{ user }}</li>
+                </ol>
+            </div>
+        </div>
+        </div>
+    </section>
 
-    <a href="{% url 'users:user_update' user.pk %}">Редактировать</a>
-    <a href="{% url 'users:user_delete' user.pk %}">Удалить</a>
+    <section class="content-body">
+        <div>
+            <h4>Имя: {{ user.first_name }} {{ user.last_name }}
+                <br />
+                <br />
+               Почта: {{ user.email }}
+            </h4>
+        </div>
+        <br />
+        <hr />
+        <br />
+        <div>
+        {% if own_profile %}
+            <a class="btn btn-primary btn-primary btn-lg" href="{% url 'users:password_change' %}">
+                <i class="fas fa-sync"></i>
+                Изменить пароль
+            </a>
+            <a class="btn btn-warning btn-lg" href="{% url 'users:user_update' user.pk %}">
+                <i class="fas fa-pen"></i>
+                Редактировать
+            </a>
+
+            <a class="btn btn-primary btn-danger btn-lg" href="{% url 'users:user_delete' user.pk %}">
+                <i class="fas fa-times"></i>
+                Удалить аккаунт
+            </a>
+        {% endif %}
+        </div>
+    </section>
 {% endblock %}

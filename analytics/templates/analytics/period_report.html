@@ -1,14 +1,95 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
 
-{% block title %}
-    <p>Заявки проекта {{ organisation }}</p>
-    {# i should pass here an organistaion name #}
+{% block title %}{{ organization }}: Отчет за период {% endblock %}
+
+{% block style %}
+    <link href="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.44/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
 {% endblock %}
 
+
 {% block content %}
-    <h1></h1>
-    {% for date, leads in leads_by_date.items %}
-        <p>{{ date }} - {{ leads.count }} - {{ leads.price }} </p>
-    {% endfor %}
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+            <div class="col-sm-6">
+                <h1>Отчет за период</h1>
+            </div>
+            <div class="col-sm-6 d-none d-sm-block">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'organizations:analytics:general_report' org_id %}">{{ organization.name }}</a></li>
+                    <li class="breadcrumb-item active">Отчет за период</li>
+                </ol>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-6">
+                    <form method="get" class="text-center">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        {{ form.media }}
+                        <button type="submit" class="btn btn-primary">Выбрать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        $(function() {
+            $('#datepicker-start, #datepicker-end').daterangepicker({
+                "locale": {
+                    "format": "YYYY-MM-DD"
+                }
+            });
+        });
+    </script>
+
+    <section class="content">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                    <tr>
+                        <th style="width: 33%">
+                            Дата
+                        </th>
+                        <th style="width: 33">
+                            Кол-во заявок
+                        </th>
+                        <th style="width: 33">
+                            На сумму
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for date, leads in leads_by_date.items %}
+                        <tr>
+                            <td>
+                                <p>{{ date }}</p>
+                            </td>
+                            <td>
+                                <p>{{ leads.count }}</p>
+                            </td>
+                            <td>
+                                <p>{{ leads.price }} руб.</p>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+    </section>
 
 {% endblock %}

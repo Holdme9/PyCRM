@@ -22,15 +22,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'jquery',
+    'bootstrap4',
+    'bootstrap_datepicker_plus',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'leads',
     'users',
-    'crispy_forms',
     'organizations',
     'analytics',
     'rest_framework',
     'rest_framework.authtoken',
     'leads_api',
     'users_api',
+    'adminlte3',
 ]
 
 MIDDLEWARE = [
@@ -127,10 +132,11 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = reverse_lazy('users:login')
 LOGIN_REDIRECT_URL = reverse_lazy('organizations:organization_list')
 LOGOUT_REDIRECT_URL = reverse_lazy('users:login')
+LOGOUT_URL = reverse_lazy('users:logout')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-CRISPY_TEMPLATE_PACK = 'tailwind'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

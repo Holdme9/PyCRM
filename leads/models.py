@@ -5,13 +5,16 @@ User = get_user_model()
 
 
 class Status(models.Model):
-    GROUP_CHOICES = [
+    GROUP_CHOICES = (
         ('New', 'Новый'),
         ('In progress', 'В работе'),
         ('Paid', 'Оплачен'),
         ('Done', 'Выполнен'),
         ('Rejected', 'Отказ'),
-    ]
+    )
+
+    def get_status_groups(self):
+        return self.GROUP_CHOICES
 
     name = models.CharField(max_length=100)
     group = models.CharField(max_length=25, choices=GROUP_CHOICES, default=GROUP_CHOICES[0][1])
@@ -48,4 +51,4 @@ class Lead(models.Model):
         Returns:
             str: Containing the order, first name and last name.
         """
-        return f'{self.order} - {self.first_name} {self.last_name}'
+        return f'{self.order}'

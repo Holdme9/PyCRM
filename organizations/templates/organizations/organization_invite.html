@@ -1,16 +1,40 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
 
-{% block title %}
-    <p>Invite users to organization</p>
-{% endblock %}
+{% block title %} Приглашение пользователей в организацию{% endblock %}
 
 {% block content %}
-    <a href="{% url 'organizations:organization_list' %}">Вернуться к организации</a>
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Пригласить пользователя в организацию {{ organization.name }}</h1>
+                </div>
+                <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'organizations:organization_detail' org_id %}">{{ organization.name }}</a></li>
+                    <li class="breadcrumb-item">Приглашение пользователей</li>
+                </ol>
+                </div>
+        </div>
+    </section>
+    
+    <section class="content">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-6">
+                    <form method="post" class="text-center">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-lg w-50">Пригласить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <hr />
-    <h1>Пригласить пользователя в организацию</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Пригласить</button>
-    </form>
+    <a href="{% url 'organizations:organization_detail' org_id %}">Go back to your organization</a>
 {% endblock %}

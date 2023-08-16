@@ -1,12 +1,40 @@
+from typing import Any, Dict
+
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 
 from .forms import SignupForm, UserUpdateForm
 
 User = get_user_model()
+
+
+class VerifyUserMixin(PermissionRequiredMixin):
+    """Verifies that user has the necessary membership to access a resource."""
+
+    def has_permission(self) -> bool:
+        """
+        Checks if requesting user is operating with their own profile.
+
+        Returns:
+            bool: True if user has necessary membership, False otherwise.
+        """
+        user = get_object_or_404(User, id=self.kwargs['pk'])
+        requesting_user = self.request.user
+        return user == requesting_user
+
+    def handle_no_permission(self) -> HttpResponseForbidden:
+        """
+        Handles the case when the user doesn't have the permission.
+
+        Returns:
+            HttpResponseForbidden: 403 response when access is denied.
+        """
+        return HttpResponseForbidden()
 
 
 class GetQuerysetAndContextObjectNameMixin:
@@ -43,8 +71,14 @@ class UserProfileView(GetQuerysetAndContextObjectNameMixin, generic.DetailView):
 
     template_name = 'users/profile.html'
 
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        user = get_object_or_404(User, id=self.kwargs['pk'])
+        context['own_profile'] = self.request.user == user
+        return context
 
-class UserUpdateView(GetQuerysetAndContextObjectNameMixin, generic.UpdateView):
+
+class UserUpdateView(VerifyUserMixin, GetQuerysetAndContextObjectNameMixin, generic.UpdateView):
     """A view for for updating details of user."""
 
     form_class = UserUpdateForm
@@ -60,7 +94,7 @@ class UserUpdateView(GetQuerysetAndContextObjectNameMixin, generic.UpdateView):
         return reverse_lazy('users:user_profile', kwargs={'pk': pk})
 
 
-class UserDeleteView(GetQuerysetAndContextObjectNameMixin, generic.DeleteView):
+class UserDeleteView(VerifyUserMixin, GetQuerysetAndContextObjectNameMixin, generic.DeleteView):
     """A view for deleting a user"""
 
     template_name = 'users/user_delete.html'

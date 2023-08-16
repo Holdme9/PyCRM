@@ -1,6 +1,72 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyCRM: система для ведения и учета сделок с клиентами</title>
+    <style>
+        /* Reset default margins and paddings */
+        body, h1, p {
+            margin: 0;
+            padding: 0;
+        }
 
-{% block content %}
-    <p>Топовая CRM система</p>
-    <a href="{% url 'users:signup' %}">Создать аккаунт</a>
-{% endblock %}
+        /* Set full viewport height */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container styles */
+        .container {
+            text-align: center;
+            padding: 50px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Heading styles */
+        .container h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+
+        /* Description styles */
+        .container p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            color: #666666;
+        }
+
+        /* Button styles */
+        .container .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .container .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PyCRM</h1>
+        <p>Минималистичная система для ведения и учета сделок с клиентами.</p>
+        <a href="{% url 'organizations:organization_list' %}" class="btn">Начать работу</a>
+    </div>
+</body>
+</html>

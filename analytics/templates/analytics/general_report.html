@@ -1,35 +1,128 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ organization }}: Общий отчет {% endblock %}
+
 {% block content %}
-    <a href="{% url 'organizations:analytics:period_report' org_id %}">Отчет за период</a>
-    <a href="{% url 'organizations:analytics:manager_report' org_id %}">Отчет по менеджерам</a>
-    <hr />
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+            <div class="col-sm-6">
+                <h1>Краткая сводка за текущий месяц</h1>
+            </div>
+            <div class="col-sm-6 d-none d-sm-block">
+                <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'organizations:analytics:general_report' org_id %}">{{ organization.name }}</a></li>
+                <li class="breadcrumb-item active">Общий отчет</li>
+                </ol>
+            </div>
+            </div>
+        </div>
+    </section>
 
-    <p>Заявок за сегодня: {{ leads_created_today_count }}</p>
-    <p>На сумму: {{ leads_created_today_price }}</p>
-    <p>Заявок в этом месяце: {{ leads_created_this_month_count }}</p>
-    <p>Выручка: {{ leads_created_this_month_price_done }}</p>
-    <p>Потенцальная выручка: {{ leads_created_this_month_price }}</p>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3>{{ leads_created_today_count }}</h3>
+                            <p>Заявки за сегодня</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                    </div>
+                </div>
     
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ leads_created_this_month_count }}</h3>
+                            <p>Заявки за месяц</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                    </div>
+                </div>
 
-    <br />
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>{{ leads_created_this_month_price }}</h3>
+                            <p>Потенциальная выручка</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-ruble-sign"></i>
+                        </div>
+                    </div> 
+                </div>
 
-    <a href="{% url 'organizations:organization_list' %}">Вернуться к списку организаций</a>
-    <a href="{% url 'organizations:leads:lead_list' org_id %}">Сделки</a>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ leads_created_this_month_price_done }}</h3>
+                            <p>Подтвержденная выручка</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-ruble-sign"></i>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <br />
     <hr />
+        <section>
+            <div class="col-sm-6">
+                <h2>Заявки по статусам</h2>
+            </div>
+        </section>
 
-    <p>Лиды по статусам</p>
+        <section class="content pb-3">
+            <div class="container-fluid h-100">
+                <div class="row">
+                    {% for status, leads in leads_by_statuses.items %}
+                        <div class="col-lg-3 col-6">
+                            <div class="card card-row card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title"><b>{{ status }}</b></h3>
+                                </div>
+                                <div class="card-body">
+                                    {% for lead in leads %}
+                                        <div class="card card-info card-outline">
+                                            <div class="card-header">
+                                                <h5 class="card-title"><b>{{ lead }}</b></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>
+                                                    <b>Бюджет:</b> {{ lead.price }} руб.<br />
+                                                    <b>Заказчик:</b> {{ lead.first_name }} {{ lead.last_name }}<br />
+                                                    <b>Менеджер:</b> {{ lead.manager }}<br />
+                                                    <b>Обновлен:</b> {{ lead.date_updated }}<br />
+                                                </p>
+                                                <div class="card-tools">
+                                                    <a class="btn btn-primary btn-sm" href="{% url 'organizations:leads:lead_detail' org_id=org_id pk=lead.id %}">
+                                                        <i class="fas fa-table"></i>
+                                                        Посмотреть
+                                                    </a>
+                                                    <a class="btn btn-info btn-sm" href="{% url 'organizations:leads:lead_update' org_id=org_id pk=lead.id %}">
+                                                        <i class="fas fa-pen"></i>
+                                                        Изменить
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %} 
+                </div>
+            </div>
+        </section>
 
-    <table>
-        {% for status, leads in leads_by_statuses.items %}
-            <tr>
-                <th>{{ status }}</th>
-                <td>{{ leads }}</td>    
-            </tr>    
-        {% endfor %}
-      </table>
-      
 
 {% endblock %}

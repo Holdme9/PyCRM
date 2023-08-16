@@ -1,14 +1,42 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block title %} Регистрация нового аккаунта {% endblock %}
 
 {% block content %}
-<h2>Регистрация нового аккаунта</h2>
-    {% if user.is_authenticated %}
-        <p>Вы уже зарегистрированы</p>
-    {% else %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Зарегистрировать</button>
-        </form>
-    {% endif %}
+    <section class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Регистрация нового аккаунта</h1>
+            </div>
+            <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                <li class="breadcrumb-item">Регистрация нового аккаунта</li>
+            </ol>
+            </div>
+        </div>
+    </section>
+    
+    <section class="content">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-6">
+                    {% if user.is_authenticated %}
+                        <p>Вы уже зарегистрированы</p>
+                    {% else %}
+                        <form method="post" class="text-center">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary btn-lg w-50">Зарегистрировать</button>
+                            <hr />
+                            <p>Уже зарегистрированы? <a href="{% url 'users:login' %}">Войти</a></p>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

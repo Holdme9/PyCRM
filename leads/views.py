@@ -62,6 +62,7 @@ class GetContextDataMixin:
         organization = Organization.objects.get(id=org_id)
         leads = Lead.objects.filter(organization=organization)
         context['org_id'] = org_id
+        context['organization'] = organization
         context['leads'] = leads
         return context
 

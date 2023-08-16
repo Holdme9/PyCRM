@@ -1,23 +1,59 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    <p>Organization list</p>
-{% endblock %}
+{% block title %} Список организаций {% endblock %}
 
 {% block content %}
-    <a href="{% url 'organizations:organization_create' %}">Create an organisation</a>
-    <hr />
-    <h1>Вы состоите в организациях:</h1>
-    {% if organizations %}  
-        {% for organization in organizations %}
-            <p>Name:{{ organization.name }} Your role:{{ organization.role }}
-            <a href="{% url 'organizations:leads:lead_list' organization.pk %}">Заявки организации</a>
-            <a href="{% url 'organizations:organization_detail' organization.pk %}">Профайл</a>
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Вы состоите в организациях:</h1>
+            </div>
+            <div class="col-sm-6 d-none d-sm-block">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">Список организаций</li>
+                </ol>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+        {% if organizations %}  
+            {% for organization in organizations %}
+                <div>
+                    <ol>
+                        <h2>
+                            <li>
+                                <a href="{% url 'organizations:organization_detail' organization.pk %}">
+                                    {{ organization.name }}
+                                </a>
+                                —
+                                <a class="btn btn-primary btn-md" href="{% url 'organizations:analytics:general_report' org_id=organization.pk %}">
+                                    <i class="fas fa-table"></i>
+                                    Посмотреть заявки
+                                </a>
+                            </li>
+                        </h2> 
+                    </ol>
+                </div>
+            {% endfor %}
+         {% else %}
+            <p>Вы не состоите в организациях, создайте новую или попросите владельца существующей
+                организации выслать приглашение на вашу почту.
             </p>
-        {% endfor %}
-    {% else %}
-        <p>Вы не состоите в организациях, создайте новую или попросите владельца существующей
-            организации выслать приглашение на вашу почту.
-        </p>
-    {% endif %}
+        {% endif %}
+    <br />
+    <hr />
+    <br />
+        <div>
+            <a class="btn btn-primary btn-lg" href="{% url 'organizations:organization_create' %}">
+                Создать организацию
+            </a>
+        </div>
+    </section>
+
+    <br />
+
 {% endblock %}

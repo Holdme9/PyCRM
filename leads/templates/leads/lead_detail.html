@@ -1,26 +1,86 @@
 {% extends 'base.html' %}
-
 {% load crispy_forms_tags %}
+{% load bootstrap4 %}
 
-{% block title %}
-    Информация о заявке №{{ lead.id }}
-{% endblock %}
+{% block title %} Информация о заявке {% endblock %}
 
 {% block content %}
-    <a href="{% url 'organizations:leads:lead_list' org_id %}">Вернуться к списку заявок</a>
-    <hr />
+    <section class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Заказ: {{ lead }}</h1>
+            </div>
+            <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                <li class="breadcrumb-item">
+                  <a href="{% url 'organizations:analytics:general_report' org_id %}">{{ organization }}</a>
+                </li>
+                <li class="breadcrumb-item">Информация о заявке</li>
+            </ol>
+            </div>
+        </div>
+    </section>
 
-    <h1>Информация о заявке {{ lead.id }}</h1>
-    <p>Клиент: {{ lead.first_name }} {{ lead.last_name }}</p>
-    <p>Заказ: {{ lead.order }}</p>
-    <p>Стоимость: {{ lead.price }} руб.</p>
-    <p>Контакты: {{ lead.phone }}, {{ lead.email }}</p>
-    <p>Статус: {{ lead.status }} </p>
-    <p>Комментарий: {{ lead.comment }}</p>
-    <p>Создан: {{ lead.date_created }}</p>
-    <p>Последнее обновление: {{ lead.date_updated }}</p>
-    <hr />
-
-    <a href="{% url 'organizations:leads:lead_update' org_id=org_id pk=lead.pk %}">Редактировать</a>
-    <a href="{% url 'organizations:leads:lead_delete' org_id=org_id pk=lead.pk %}">Удалить</a>
+    <section class="content">
+        <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Заказчик: {{ lead.first_name }} {{ lead.last_name }}</h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                    <div class="col-lg-3 col-6">
+                      <div class="info-box bg-light">
+                        <div class="info-box-content">
+                          <span class="info-box-text text-center text-muted">Бюджет</span>
+                          <span class="info-box-number text-center text-muted mb-0">{{ lead.price }} руб.</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                      <div class="info-box bg-light">
+                        <div class="info-box-content">
+                          <span class="info-box-text text-center text-muted">Статус</span>
+                          <span class="info-box-number text-center text-muted mb-0">{{ lead.status }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                      <div class="info-box bg-light">
+                        <div class="info-box-content">
+                          <span class="info-box-text text-center text-muted">Дата создания</span>
+                          <span class="info-box-number text-center text-muted mb-0">{{ lead.date_created }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box bg-light">
+                          <div class="info-box-content">
+                            <span class="info-box-text text-center text-muted">Последнее обновление</span>
+                            <span class="info-box-number text-center text-muted mb-0">{{ lead.date_updated }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                <div class="col-lg-3 col-6">
+                    <h3><i class="fas fa-phone-alt"></i>&nbsp{{ lead.phone }}</h3>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <h3><i class="fas fa-envelope"></i>&nbsp{{ lead.email }}</h3>
+                </div>
+                <div>
+                    <h3>Комментарий&nbsp <i class="fas fa-comment-alt"></i></h3>
+                    <p class="text-muted">{{ lead.comment }}</p>
+                </div>
+                <hr />
+                <div class="row">
+                    <a href="{% url 'organizations:leads:lead_update' org_id=org_id pk=lead.pk %}" class="btn btn-lg btn-primary">Редактировать</a>
+                    &nbsp
+                    <a href="{% url 'organizations:leads:lead_delete' org_id=org_id pk=lead.pk %}" class="btn btn-lg btn-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

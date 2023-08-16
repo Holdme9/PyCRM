@@ -1,13 +1,40 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block title %} Вход в аккаунт {% endblock %}
 
 {% block content %}
-    <h2>Логин:</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Войти</button>
-        <hr />
-        <p>Забыли пароль? <a href="{% url 'users:password_reset' %}">Восстановить</a></p>
-        <p>Нет аккаунта? <a href="{% url 'users:signup' %}">Создать</a></p>
-    </form>
+    <section class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+            <h1>Вход в аккаунт</h1>
+            </div>
+            <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active"><a href="{% url 'main_page' %}">Главная</a></li>
+                <li class="breadcrumb-item">Вход в аккаунт</li>
+            </ol>
+            </div>
+        </div>
+    </section>
+    
+    <section class="content">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-6">
+                    <form method="post" class="text-center">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-lg w-50">Войти</button>
+                        <hr />
+                        <p>Забыли пароль? <a href="{% url 'users:password_reset' %}">Восстановить</a></p>
+                        <p>Нет аккаунта? <a href="{% url 'users:signup' %}">Создать</a></p>
+                        <p>Логин и пароль для демо доступа: <b>demo demo1234</b></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

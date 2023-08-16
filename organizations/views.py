@@ -127,6 +127,16 @@ class OrganizationInviteView(VerifyOwnershipMixin, generic.FormView):
     template_name = 'organizations/organization_invite.html'
     success_url = reverse_lazy('organizations:organization_list')
 
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Provides data for the context dictionary."""
+
+        context = context = super().get_context_data(**kwargs)
+        org_id = self.kwargs['org_id']
+        organization = Organization.objects.get(id=org_id)
+        context['org_id'] = org_id
+        context['organization'] = organization
+        return context
+
     def form_valid(self, form):
         """
         Creates and sends the invitation to user if submitted form is valid

@@ -1,15 +1,16 @@
-from typing import Any, Dict, Optional, Tuple
-from datetime import date, timedelta
+from typing import Any, Dict
+from datetime import timedelta
 
 from django.views.generic import TemplateView
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
+from django.core.paginator import Paginator
 
 from leads.models import Lead, Status
 from organizations.models import Organization
 from leads.views import VerifyMembershipMixin
+from .forms import DateRangeForm
 
 User = get_user_model()
 
@@ -33,12 +34,12 @@ class GeneralReport(VerifyMembershipMixin, TemplateView):
         org_id = self.kwargs['org_id']
         organization = Organization.objects.get(id=org_id)
         context['org_id'] = org_id
+        context['organization'] = organization
         leads_created_today = Lead.objects.filter(
             organization=organization,
             date_created__gt=yesterday,
             )
         leads_created_today_count = len(leads_created_today)
-        leads_created_today_price = sum(lead.price for lead in leads_created_today)
         leads_created_this_month = Lead.objects.filter(
             organization=organization,
             date_created__year=year,
@@ -46,30 +47,23 @@ class GeneralReport(VerifyMembershipMixin, TemplateView):
             )
         leads_created_this_month_count = len(leads_created_this_month)
         leads_created_this_month_price = sum(lead.price for lead in leads_created_this_month)
-        statuses = Status.objects.filter(group=status_groups[3][0])
+        done_statuses = Status.objects.filter(group=status_groups[3][0])
         leads_created_this_month_price_done = sum(
-            lead.price for lead in leads_created_this_month.filter(status__in=statuses))
+            lead.price for lead in leads_created_this_month.filter(status__in=done_statuses))
         context['leads_created_today_count'] = leads_created_today_count
-        context['leads_created_today_price'] = leads_created_today_price
         context['leads_created_this_month_count'] = leads_created_this_month_count
         context['leads_created_this_month_price'] = leads_created_this_month_price
         context['leads_created_this_month_price_done'] = leads_created_this_month_price_done
 
         # Status group slices 0 and 1 are related to private and public status group names
-        status_group_names = [status_group_name[0] for status_group_name in status_groups]
+        status_group_names = [status_group_name[0] for status_group_name in status_groups[:4]]
         leads_by_statuses = dict()
 
         for i, status_group_name in enumerate(status_group_names):
-            leads = []
             statuses = Status.objects.filter(group=status_group_name)
-
-            for status in statuses:
-                leads.append(Lead.objects.filter(status=status))
-
-            # using public status group name of i-th group
+            leads = Lead.objects.filter(status__in=statuses)
             leads_by_statuses[f'{status_groups[i][1]}'] = leads
 
-        context['status_groups'] = status_group_names
         context['leads_by_statuses'] = leads_by_statuses
         return context
 
@@ -92,19 +86,31 @@ class ManagerReport(VerifyMembershipMixin, TemplateView):
         done_status_group = status_groups[3][0]
         done_statuses = Status.objects.filter(group=done_status_group)
         leads = Lead.objects.filter(organization=organization)
-        leads_by_manager = dict()
+        managers_stats = dict()
 
         for manager in managers:
-            leads_by_manager[f'{manager.id}_leads_count'] = len(leads.filter(manager=manager))
-            leads_by_manager[f'{manager.id}_leads_approved'] = len(leads.filter(manager=manager))
-            leads_by_manager[f'{manager.id}_leads_price'] = sum(
-                lead.price for lead in leads.exclude(status__in=reject_statuses))
-            leads_by_manager[f'{manager.id}_leads_done_price'] = sum(
-                lead.price for lead in leads.filter(status__in=done_statuses))
+            manager_name = f'{manager.first_name} {manager.last_name} ({manager.email})'
+            manager_leads = leads.filter(manager=manager)
+            manager_sales_sum = sum(
+                lead.price for lead in manager_leads.filter(status__in=done_statuses)
+                )
+            manager_leads_count = len(manager_leads)
+            manager_leads_rejected_count = len(manager_leads.filter(status__in=reject_statuses))
+            manager_leads_rejected_percentage = round(
+                manager_leads_rejected_count / manager_leads_count,
+                2
+                ) * 100 if manager_leads_count else 0
+
+            managers_stats[f'{manager}'] = {
+                'name': manager_name,
+                'sales_sum': manager_sales_sum,
+                'leads_count': manager_leads_count,
+                'leads_rejected_count': manager_leads_rejected_percentage
+            }
 
         context['org_id'] = org_id
-        context['managers'] = managers
-        context['leads_by_manager'] = leads_by_manager
+        context['organization'] = organization
+        context['managers_stats'] = managers_stats
         return context
 
 
@@ -131,6 +137,10 @@ class PeriodReport(VerifyMembershipMixin, TemplateView):
         """Provides data to the context dictionary."""
 
         context = super().get_context_data(**kwargs)
+        org_id = self.kwargs['org_id']
+        organization = Organization.objects.get(id=org_id)
+        context['org_id'] = org_id
+        context['organization'] = organization
         start_date, end_date = self.parse_date_parameters()
         leads = Lead.objects.filter(date_created__range=(start_date, end_date))
         leads_by_date = dict()
@@ -139,10 +149,12 @@ class PeriodReport(VerifyMembershipMixin, TemplateView):
             day = end_date - timedelta(days=i)
             date_leads = leads.filter(date_created=day)
             date_leads_data = {
-                'count': date_leads.count(),
-                'price': date_leads.aggregate(Sum('price'))['price__sum']
+                'count': len(date_leads),
+                'price': sum(lead.price for lead in date_leads)
                 }
             leads_by_date[str(day)] = date_leads_data
 
         context['leads_by_date'] = leads_by_date
+        context['form'] = DateRangeForm
+
         return context
