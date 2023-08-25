@@ -1,0 +1,20 @@
+# Ignore development / local files
+.dockerignore
+*.pyc
+*.pyo
+/static/
+/media/
+
+# Ignore version control files
+.git/
+.gitignore
+
+# Ignore other unnecessary files or directories
+node_modules/
+__pycache__/
+
+# Environments
+.venv
+.venv/
+venv/
+venv.bak/
