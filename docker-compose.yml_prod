@@ -32,6 +32,19 @@ services:
     depends_on:
       - db
     restart: always
+    entrypoint: ./entrypoint.sh
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    ports:
+       - 81:80
+    volumes:
+       - ./static:/static/
+       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+       - web
 
 volumes:
   db_data:

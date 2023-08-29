@@ -1,0 +1,17 @@
+# Example .env file
+SECRET_KEY=secret_key
+DEBUG=True
+DB_NAME=db_name
+DB_USER=db_user
+DB_PASSWORD=db_password
+# DB_HOST=localhost if you're using 'python manage.py runserver'
+# instead of 'docker compose up' command. 
+DB_HOST=db
+DB_PORT=5432
+
+POSTGRES_PASSWORD=PG_PASSWORD
+POSTGRES_USER=PG_USER
+POSTGRES_DB=PG_DB
+
+EMAIL_HOST_USER=gmail_host_user@gmail.com
+EMAIL_HOST_PASSWORD='gmail_user_password'
