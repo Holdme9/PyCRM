@@ -50,7 +50,7 @@ class VerifyMembershipMixin(PermissionRequiredMixin):
 class GetContextDataMixin:
     """Provides additional context data for views."""
 
-    def get_context_data(self, **kwargs) -> dict:
+    def get_context_data(self, **kwargs: dict[str: any]) -> dict[str: any]:
         """
         Gets id and queryset of leads related to certain organization.
 
@@ -70,7 +70,7 @@ class GetContextDataMixin:
 class GetFormKwargsMixin:
     """Provides additional kwargs to forms."""
 
-    def get_form_kwargs(self) -> dict:
+    def get_form_kwargs(self) -> dict[str: any]:
         """
         Provides a queryset of users that have a certain membership.
 
